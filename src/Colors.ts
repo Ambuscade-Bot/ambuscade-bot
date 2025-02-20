@@ -8,4 +8,5 @@ export default {
     PING_EMBED: 0x41F097,
     CHANGELOG_EMBED: 0x5865F2,
     FAILURE_EMBED: 0xAA0000,
+    BASE_EMBED: 0x58f293,
 };

@@ -19,6 +19,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^8.9.5",
     "node-schedule": "^2.1.1",
+    "sharp": "^0.33.5",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
