@@ -19,6 +19,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^8.9.5",
     "node-schedule": "^2.1.1",
+    "poisson-disk-sampling": "^2.3.1",
     "sharp": "^0.33.5",
     "zlib": "^1.0.5"
   },
@@ -29,6 +30,7 @@
     "@types/lodash": "^4.17.15",
     "@types/node": "^22.10.7",
     "@types/node-schedule": "^2.1.7",
+    "@types/poisson-disk-sampling": "^2.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   }

@@ -1,8 +1,8 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, MessageFlags } from "discord.js";
-import { Command } from "../InteractionEssentials";
+import { Command, ReplyType } from "../InteractionEssentials";
 import { debug } from "../Log";
-import { FeatureNotImplementedFailure } from "../Failure";
-import { createNewGameProfile } from "src/models/gameProfile";
+import { FeatureNotImplementedFailure, ProfileNotFoundFailure } from "../Failure";
+import { createNewGameProfile, selectGameProfile } from "src/models/gameProfile";
 
 export const Profile: Command = {
     name: "profile",
@@ -18,16 +18,40 @@ export const Profile: Command = {
             type: ApplicationCommandOptionType.Subcommand,
             name: "select",
             description: "Select your active profile",
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: "name",
+                    description: "Name of the profile",
+                    required: true,
+                }
+            ]
         },
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: "create",
             description: "Create a new profile",
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: "name",
+                    description: "Name of the profile",
+                    required: true,
+                }
+            ]
         },
         {
             type: ApplicationCommandOptionType.Subcommand,
             name: "delete",
             description: "Delete a profile",
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: "name",
+                    description: "Name of the profile",
+                    required: true,
+                }
+            ]
         },
     ],
     run: async (client, interaction, botUser, discordUser) => {
@@ -42,13 +66,25 @@ export const Profile: Command = {
         },
         select: {
             run: async (client, interaction, botUser, discordUser) => {
-
+                const profileName = interaction.options.getString("name", true);
+                try {
+                    await selectGameProfile(discordUser, profileName);
+                    return {
+                        replyType: ReplyType.Reply,
+                        content: "Profile selected",
+                        flags: [MessageFlags.Ephemeral]
+                    }
+                } catch (e) {
+                    return new ProfileNotFoundFailure(e);
+                }
             }
         },
         create: {
             run: async (client, interaction, botUser, discordUser) => {
-                createNewGameProfile(discordUser);
+                const profileName = interaction.options.getString("name", true);
+                await createNewGameProfile(discordUser, profileName);
                 return {
+                    replyType: ReplyType.Reply,
                     content: "Profile created",
                     flags: [MessageFlags.Ephemeral]
                 }
@@ -56,7 +92,8 @@ export const Profile: Command = {
         },
         delete: {
             run: async (client, interaction, botUser, discordUser) => {
-
+                const profileName = interaction.options.getString("name", true);
+                await deleteGameProfile(discordUser, profileName);
             }
         },
     },

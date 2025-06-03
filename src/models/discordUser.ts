@@ -1,6 +1,7 @@
 import { User } from 'discord.js';
 import { Document, Model, Schema, model } from 'mongoose';
 import { debug } from '../Log';
+import { GameProfileDoc } from './gameProfile';
 
 export type DiscordUserType = 'discord' | 'legacy' | 'non-discord';
 export type RawDiscordUser = User | string;
@@ -19,7 +20,9 @@ export const DEFAULT_DISCORD_USER_SETTINGS: DiscordUserSettings = { }
 export interface DiscordUserDoc extends Document {
     name: string; // username, username#discriminator, or non discord name
     type: DiscordUserType;
-    settings: DiscordUserSettings
+    settings: DiscordUserSettings;
+    selectedGameProfile?: GameProfileDoc['_id'];
+    lastIngame?: Date;
     userId?: string;
 }
 
@@ -29,6 +32,8 @@ const discordUserSchema = new Schema<DiscordUserDoc, DiscordUserModel>({
     type: { type: String, required: true },
     name: { type: String, required: true },
     settings: { type: Object, required: true, default: DEFAULT_DISCORD_USER_SETTINGS },
+    selectedGameProfile: { type: Schema.Types.ObjectId, ref: 'GameProfiles' },
+    lastIngame: { type: Date },
     userId: { type: String },
 });
 
@@ -72,6 +77,10 @@ export async function getOrCreateDiscordUser(username: string, type: DiscordUser
         return await discordUserModel.create({ type: type, userId: id, name: username });
     }
     return document;
+}
+
+export async function updateGameActivity(discordUser: DiscordUserDoc): Promise<void> {
+    await discordUserModel.updateOne({ _id: discordUser._id }, { lastIngame: new Date() }).exec();
 }
 
 export default discordUserModel;

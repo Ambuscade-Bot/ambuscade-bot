@@ -3,6 +3,7 @@ import { localize } from "./Localization";
 import { ReplyType, Response } from "./InteractionEssentials";
 import { error, logToDiscord } from "./Log";
 import Colors from "./Colors";
+import { Profile } from './commands/Profile';
 
 export class Failure {
     type: string;
@@ -159,5 +160,13 @@ export class CommandFormatFailure extends Failure {
         super(error);
         this.type = "commandFormatFailure";
         this.localizationKey = "failure.command_format";
+    }
+}
+
+export class ProfileNotFoundFailure extends Failure {
+    constructor(error?: any) {
+        super(error);
+        this.type = "profileNotFound";
+        this.localizationKey = "failure.profile_not_found";
     }
 }
